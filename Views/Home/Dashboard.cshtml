@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <div class="container">
+        @model List<Activity>
+        <div class="row">
+            <div class="col-5">
+                <h4>Dajo Activity Center </h4>
+            </div>
+            <div class="col-4">
+                <h5>welcome @ViewBag.userName</h5>
+            </div>
+            <div class="col-2">
+                
+                <a href="logout">Logout</a>
+            </div>
+        </div>
+        <div class="col-10">
+            <table class="table table-striped">
+                <thead class="text-white bg-primary">
+                    <tr>
+                        <th scope="col">Activity</th>
+                        <th scope="col">Date and Time</th>
+                        <th scope="col">Duration</th>
+                        <th scope="col">Event Coordinator</th>
+                        <th scope="col">No of Participants</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>                  
+           
+                        @foreach(var i in Model)
+                        {
+                            <tr>
+                                <td><a href="showInfo/@i.ActivityId">@i.Title</a></td>
+                                @{
+                                    var time = Convert.ToDateTime(i.Time);
+
+                                    <td>@i.Date.ToString("MMM d") @@ @time.ToString("h:mm tt")</td>
+                                }
+                                <td>@i.Duration @i.DurUnit</td>
+                                <td>@i.Createdby.FirstName</td>
+                                <td>@i.ActivityUser.Count()</td>
+                                
+                                @if(i.UserId == ViewBag.UserId)
+                                {
+                                    <td><a href="/delete/@i.ActivityId">Delete</a></td>
+                                }
+                                else
+                                {
+                                    if(i.ActivityUser.Any( a => a.UserId == ViewBag.UserId))
+                                    {
+                                        <td><a href="/leave/@i.ActivityId">Leave</a></td>
+                                    
+                                    }
+                                    else
+                                    {
+                                        <td><a href="/join/@i.ActivityId">Join</a></td>
+                                    }
+                                }
+                                
+                            </tr>
+                        }
+                    
+
+
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col-8"></div>
+            <div class="col-3" >
+                <a href="/newActivity" class="btn btn-primary" role="button" >Add New Activity</a>
+            </div>
+        </div>
+
+
+    </div>
+</body>
+
+</html>

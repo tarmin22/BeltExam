@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>NewActvity</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <h3>Dojo Activity Center</h3>
+                
+            </div>
+            <div class="col-3">
+                <a href="dashboard" class="mr-3">Home</a>
+                <a href="logout">Logout</a>
+            </div>          
+        </div>
+        <hr class="bg-dark">
+        @model Activity
+        <div class="row">
+            <div class="col-4">
+                <form asp-action="AddActivity" method="post">           
+                    <div class="form-group">
+                        <span class="d-block text-warning" asp-validation-for="Title"></span>
+                        <label for="exampleInputEmail1" asp-for="Title">Title</label>
+                        <input type="text" class="form-control" asp-for="Title">
+                    </div>
+                    <div class="form-group">
+                        <span class="d-block text-warning" asp-validation-for="Time"></span>
+                        <label for="exampleInputEmail1" asp-for="Time">Time</label>
+                        <input type="Time" class="form-control" asp-for="Time">
+                    </div>
+                     <div class="form-group">
+                        <span class="d-block text-warning" asp-validation-for="Duration"></span>
+                        <label for="exampleInputEmail1" asp-for="Duration">Duration</label>
+                        <input type="Number" class="form-control" asp-for="Duration">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1"></label>
+                        <select class="form-control" id="exampleFormControlSelect1" asp-for="DurUnit">
+                            <option>Hour</option>
+                            <option>Minutes</option>
+                            <option>Days</option>                            
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <span class="d-block text-warning" asp-validation-for="Date"></span>
+                        <label for="exampleInputEmail1" asp-for="Date">Date</label>
+                        <input type="Date" class="form-control" asp-for="Date">
+                    </div>
+                    <div class="form-group">
+                        <span class="d-block text-warning" asp-validation-for="Description"></span>
+                        <label for="exampleFormControlTextarea1" asp-for="Description">Description</label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" asp-for="Description"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Create Activity</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

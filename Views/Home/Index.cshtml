@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    @model User
+    <div class="container">
+        
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4 class=" col-10 text-center">Register</h4>
+                <form asp-action="Add" method="post">           
+                    <div class="form-group">
+                        <span class="d-block text-warning" asp-validation-for="FirstName"></span>
+                        <label for="exampleInputEmail1" asp-for="FirstName">First Name</label>
+                        <input type="text" class="form-control" asp-for="FirstName">
+                    </div>
+                    <div class="form-group">
+                        <span class="d-block text-warning" asp-validation-for="LastName"></span>
+                        <label for="exampleInputEmail1" asp-for="LastName">Last Name</label>
+                        <input type="text" class="form-control" asp-for="LastName">
+                    </div>
+                    <div class="form-group">
+                        <span class="d-block text-warning" asp-validation-for="Email"></span>
+                        <label for="exampleInputEmail1" asp-for="Email">Email</label>
+                        <input type="text" class="form-control" asp-for="Email">
+                    </div>
+                    <div class="form-group">
+                        <span class="d-block text-warning" asp-validation-for="Password"></span>
+                        <label for="exampleInputEmail1" asp-for="Password">Password</label>
+                        <input type="text" class="form-control" asp-for="Password">
+                    </div>
+                    <div class="form-group">
+                        <span class="d-block text-warning" asp-validation-for="Confirm"></span>
+                        <label for="exampleInputEmail1" asp-for="Confirm">Confirm Password</label>
+                        <input type="text" class="form-control" asp-for="Confirm">
+                    </div>
+                    <button type="submit" class="btn btn-success">Sign up Now</button>             
+                
+                </form>
+            </div>
+            <div class="col-6">
+                <partial name="Login"/>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+
+    @model Login
+    <div class="container">
+
+        <h4 class="text-center">Login</h4>
+        <form asp-action="LoginU" method="post">
+
+            <div class="form-group">
+                <span class="d-block text-danger" asp-validation-for="LEmail"></span>
+                <label for="exampleInputEmail1" asp-for="LEmail">Email</label>
+                <input type="text" class="form-control" asp-for="LEmail">
+            </div>
+                <div class="form-group">
+                <span class="d-block text-danger" asp-validation-for="LPassword"></span>
+                <label for="exampleInputEmail1" asp-for="LPassword">Password</label>
+                <input type="text" class="form-control" asp-for="LPassword">
+            </div>
+            <button type="submit" class="btn btn-success">Log In</button>               
+
+        </form>
+    </div>
