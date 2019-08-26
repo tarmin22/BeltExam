@@ -114,7 +114,12 @@ namespace BeltExam.Controllers
             }
 
             var loggedUser = dbContext.Users.FirstOrDefault(u => u.UserId == HttpContext.Session.GetInt32("UserId"));
-            var allactivities = dbContext.Activities.OrderByDescending(a => a.Date).Include(u => u.Createdby).Include(a => a.ActivityUser).ThenInclude(u => u.ActivityParticipant).ToList();
+            var allactivities = dbContext.Activities.OrderByDescending(a => a.Date).Where(a => a.Date > DateTime.Now).Include(u => u.Createdby).Include(a => a.ActivityUser).ThenInclude(u => u.ActivityParticipant).ToList();
+
+            // Added where to check if the date of the activity has passed the current date
+            // var allactivities = dbContext.Activities.OrderByDescending(a => a.Date).Include(u => u.Createdby).Include(a => a.ActivityUser).ThenInclude(u => u.ActivityParticipant).Where(a => a.Date < DateTime.Now).ToList();
+
+
             // foreach (var i in allweddings)
             // {
             //     if ((DateTime.Compare(DateTime.Today, i.WedDate) > 0))
@@ -156,6 +161,7 @@ namespace BeltExam.Controllers
             {
 
                 int result = DateTime.Compare(DateTime.Today, activity.Date);
+
                 if (result < 1)
                 {
                     var newAct = activity;
@@ -173,6 +179,33 @@ namespace BeltExam.Controllers
             }
             return View("NewActivity");
         }
+
+        [HttpGet("editActivity/{actID}")]
+        public IActionResult EditActivity(int actID)
+        {
+            Activity activity = dbContext.Activities.FirstOrDefault(a => a.ActivityId == actID);
+            return View(activity);
+        }
+
+        [HttpPost("updActivity/{actID}")]
+
+        public IActionResult UpdActivity(Activity activity, int actID)
+        {
+
+            Activity u_act = dbContext.Activities.FirstOrDefault(a => a.ActivityId == actID);
+
+            u_act.Title = activity.Title;
+            u_act.Time = activity.Time;
+            u_act.Date = activity.Date;
+            u_act.Duration = activity.Duration;
+            u_act.DurUnit = activity.DurUnit;
+            u_act.Description = activity.Description;
+            u_act.UpdatedAt = DateTime.Now;
+
+            dbContext.SaveChanges();
+            return RedirectToAction("Dashboard");
+        }
+
 
 
         // [HttpPost("addActivity")]
