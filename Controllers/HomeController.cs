@@ -213,8 +213,9 @@ namespace BeltExam.Controllers
             }
             else
             {
+                Hobby u_hob = dbContext.Hobbies.FirstOrDefault(a => a.HobbyId == hobID);
                 // ModelState.AddModelError("Date", "Invalid Activity Date.  Activity Date must be after today's date.");
-                return View("hobby");
+                return View("EditHobby", u_hob);
 
             }
         }
