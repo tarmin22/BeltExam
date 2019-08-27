@@ -9,10 +9,8 @@ namespace BeltExam.Models
         // "users" table is represented by this DbSet "Users"
         // "users" table is represented by this DbSet "Users"
         public DbSet<User> Users { get; set; }
-        public DbSet<Activity> Activities { get; set; }
-        public DbSet<UserActivity> UserActivities { get; set; }
-
-
+        public DbSet<Hobby> Hobbies { get; set; }
+        public DbSet<Enthusiast> Enthusiasts { get; set; }
 
     }
 }

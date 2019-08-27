@@ -19,8 +19,9 @@ namespace BeltExam.Models
         [MinLength(2)]
         public string LastName { get; set; }
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        [MinLength(3)]
+        [MaxLength(15)]
+        public string Username { get; set; }
         [Required]
         [MinLength(8)]
         [DataType(DataType.Password)]
@@ -34,8 +35,8 @@ namespace BeltExam.Models
         [Compare("Password")]
         [DataType(DataType.Password)]
         public string Confirm { get; set; }
-        public List<Activity> Creator { get; set; }
-        public List<UserActivity> Participant { get; set; }
+        public List<Hobby> Creator { get; set; }
+        public List<Enthusiast> UserEnthusiast { get; set; }
 
 
     }

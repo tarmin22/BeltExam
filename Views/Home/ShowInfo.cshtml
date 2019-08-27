@@ -10,10 +10,10 @@
 
 <body>
     <div class="container">
-        @model Activity
+        @model Hobby
         <div class="row">
             <div class="col-9">
-                <h3>Dojo Acitivity Center</h3>
+               
             </div>
             <div class="col-3">
                 <a href="/dashboard" class="mr-2">Dashboard</a>
@@ -25,47 +25,42 @@
 
 
         <div class="row">
-            <div class="col-6 ml-5">
-                <h5>@Model.Title</h5>
+            <div class="col-6 ">
+                <h3>@Model.Name</h3>
+                <span>Description</span>
+                <div class="border-dark">
+                    <p>@Model.Description</p>
+                </div>
             </div>
+            
+        </div>
+        <a href="/editHobby/@Model.HobbyId" class="btn btn-primary" role="button" >Edit Hobby</a>
+        
+        <div class="row">
+            <div class="col-4 ml 5">
+                <P>@Model.Name Enthusiasts:</P>
+                <div class="border border-dark">
+                    <ul>
+                        @foreach(var i in Model.HobbyEnthusiast)
+                        {
+                        <li>@i.EnthusiastUser.FirstName </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="col-4"></div>
             <div class="col-4">
-                @if(Model.UserId == ViewBag.UserId)
-                {
-                    
-                    <a href="/delete/@Model.ActivityId" class="btn btn-primary" role="button" >Delete</a>
-                }
-                else
-                {
-                    if(Model.ActivityUser.Any( a => a.UserId == ViewBag.UserId))
-                    {
-                
-                        <a href="/leave/@Model.ActivityId" class="btn btn-primary" role="button" >Leave</a>
-                    
-                    }
+
+                    @if(Model.HobbyEnthusiast.Any(h =>h.UserId== ViewBag.UserId && h.HobbyId == Model.HobbyId))
+                    {}
                     else
                     {
-                        
-                        <a href="/join/@Model.ActivityId" class="btn btn-primary" role="button" >Join</a>
+                         <a href="/join/@Model.HobbyId" class="btn btn-primary" role="button" >Add to Hobbies</a>
                     }
-                }
-                                
+
+                   
                 
-                <a href="/editActivity/@Model.ActivityId" class="btn btn-primary" role="button" >Edit</a>
             </div>
-        </div>
-        <p>Event Coordinator: @Model.Createdby.FirstName</p>
-        <p>Description</p>
-        <div class="border-dark">
-            <p>@Model.Description</p>
-        </div>
-        <div class="col-4 ml 5">
-            <P>Participant:</P>
-            <ul>
-                @foreach(var i in Model.ActivityUser)
-                {
-                <li>@i.ActivityParticipant.FirstName @i.ActivityParticipant.LastName</li>
-                }
-            </ul>
         </div>
 
     </div>

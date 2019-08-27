@@ -38,19 +38,19 @@ namespace BeltExam.Controllers
                 var isValidated = hasNumber.IsMatch(user.Password) && hasUpperChar.IsMatch(user.Password) && hasSymbols.IsMatch(user.Password);
 
 
-                if (dbContext.Users.Any(u => u.Email == user.Email))
+                if (dbContext.Users.Any(u => u.Username == user.Username))
                 {
 
-                    ModelState.AddModelError("Email", "Email already in use!");
+                    ModelState.AddModelError("Username", "Username already in use!");
 
 
 
                     return View("Index");
                 }
-                else if (!isValidated)
-                {
-                    ModelState.AddModelError("Password", "Password must have at least one upper case letter, one number, and one espacial character");
-                }
+                // else if (!isValidated)
+                // {
+                //     ModelState.AddModelError("Password", "Password must have at least one upper case letter, one number, and one espacial character");
+                // }
                 else
                 {
                     PasswordHasher<User> Hasher = new PasswordHasher<User>();
@@ -78,10 +78,10 @@ namespace BeltExam.Controllers
 
             if (ModelState.IsValid)
             {
-                User currentUser = dbContext.Users.FirstOrDefault(s => s.Email == l_user.LEmail);
+                User currentUser = dbContext.Users.FirstOrDefault(s => s.Username == l_user.LUsername);
                 if (currentUser == null)
                 {
-                    ModelState.AddModelError("LEmail", "Invalid Email/Password");
+                    ModelState.AddModelError("LUsername", "Invalid Username/Password");
                     return View("Index");
                 }
 
@@ -92,7 +92,7 @@ namespace BeltExam.Controllers
                 // result can be compared to 0 for failure
                 if (result == 0)
                 {
-                    ModelState.AddModelError("LEmail", "Invalid Email/Password");
+                    ModelState.AddModelError("LUsername", "Invalid Email/Password");
                     return View("Index");
                 }
                 HttpContext.Session.SetInt32("UserId", currentUser.UserId);
@@ -114,7 +114,9 @@ namespace BeltExam.Controllers
             }
 
             var loggedUser = dbContext.Users.FirstOrDefault(u => u.UserId == HttpContext.Session.GetInt32("UserId"));
-            var allactivities = dbContext.Activities.OrderByDescending(a => a.Date).Where(a => a.Date > DateTime.Now).Include(u => u.Createdby).Include(a => a.ActivityUser).ThenInclude(u => u.ActivityParticipant).ToList();
+            var allhobbies = dbContext.Hobbies.Include(u => u.Createdby).Include(a => a.HobbyEnthusiast).ThenInclude(u => u.EnthusiastUser).ToList();
+
+            // var allactivities = dbContext.Activities.OrderByDescending(a => a.Date).Where(a => a.Date > DateTime.Now).Include(u => u.Createdby).Include(a => a.ActivityUser).ThenInclude(u => u.ActivityParticipant).ToList();
 
             // Added where to check if the date of the activity has passed the current date
             // var allactivities = dbContext.Activities.OrderByDescending(a => a.Date).Include(u => u.Createdby).Include(a => a.ActivityUser).ThenInclude(u => u.ActivityParticipant).Where(a => a.Date < DateTime.Now).ToList();
@@ -133,80 +135,114 @@ namespace BeltExam.Controllers
             ViewBag.UserId = HttpContext.Session.GetInt32("UserId");
 
 
-            return View(allactivities);
+            return View(allhobbies);
         }
 
-        [HttpGet("showInfo/{actId}")]
-        public IActionResult ShowInfo(int actId)
+        [HttpGet("showInfo/{hobId}")]
+        public IActionResult ShowInfo(int hobId)
         {
-            var activity = dbContext.Activities.Include(u => u.Createdby).Include(a => a.ActivityUser).ThenInclude(u => u.ActivityParticipant).FirstOrDefault(a => a.ActivityId == actId);
+            var hobby = dbContext.Hobbies.Include(u => u.Createdby).Include(h => h.HobbyEnthusiast).ThenInclude(u => u.EnthusiastUser).FirstOrDefault(h => h.HobbyId == hobId);
             ViewBag.UserId = HttpContext.Session.GetInt32("UserId");
-            return View(activity);
+            return View(hobby);
 
         }
 
 
-        [HttpGet("newActivity")]
-        public IActionResult NewActivity()
+        [HttpGet("newHobby")]
+        public IActionResult NewHobby()
         {
 
             return View();
         }
 
-        [HttpPost("addActivity")]
-        public IActionResult AddActivity(Activity activity)
+        [HttpPost("addHobby")]
+        public IActionResult AddHobby(Hobby hobby)
         {
 
             if (ModelState.IsValid)
             {
 
-                int result = DateTime.Compare(DateTime.Today, activity.Date);
-
-                if (result < 1)
+                if (dbContext.Hobbies.Any(h => h.Name == hobby.Name))
                 {
-                    var newAct = activity;
-                    newAct.UserId = (int)HttpContext.Session.GetInt32("UserId");
-                    dbContext.Activities.Add(newAct);
-                    dbContext.SaveChanges();
-                    return RedirectToAction("ShowInfo", new { actId = newAct.ActivityId });
+
+                    ModelState.AddModelError("Name", "Hobby name is already in use!");
+
+
+
+                    return View("NewHobby");
                 }
-                else
-                {
-                    ModelState.AddModelError("Date", "Invalid Activity Date.  Activity Date must be after today's date.");
-                    return View("NewActivity");
+                var newHob = hobby;
+                newHob.UserId = (int)HttpContext.Session.GetInt32("UserId");
+                dbContext.Hobbies.Add(newHob);
+                dbContext.SaveChanges();
+                return RedirectToAction("Dashboard");
+            }
+            else
+            {
 
+                return View("NewHobby");
+
+            }
+        }
+
+        [HttpGet("editHobby/{hobID}")]
+        public IActionResult EditHobby(int hobID)
+        {
+            Hobby hobby = dbContext.Hobbies.FirstOrDefault(a => a.HobbyId == hobID);
+            return View(hobby);
+        }
+
+        [HttpPost("updHubby/{hobID}")]
+
+        public IActionResult UpdHobby(Hobby hobby, int hobID)
+        {
+
+            if (ModelState.IsValid)
+            {
+
+                Hobby u_hob = dbContext.Hobbies.FirstOrDefault(a => a.HobbyId == hobID);
+
+                u_hob.Name = hobby.Name;
+                u_hob.Description = hobby.Description;
+                u_hob.UpdatedAt = DateTime.Now;
+
+
+                dbContext.SaveChanges();
+                return RedirectToAction("ShowInfo", new { HobID = hobID });
+
+            }
+            else
+            {
+                // ModelState.AddModelError("Date", "Invalid Activity Date.  Activity Date must be after today's date.");
+                return View("hobby");
+
+            }
+        }
+
+        [HttpGet("join/{hobID}")]
+        public IActionResult Join(int hobID)
+        {
+            var check_hob = dbContext.Enthusiasts.Where(e => e.HobbyId == hobID);
+            var userID = (int)HttpContext.Session.GetInt32("UserId");
+
+            if (check_hob != null)
+            {
+                foreach (var i in check_hob)
+                {
+                    if (i.HobbyId == hobID && i.UserId == userID)
+                    {
+                        return RedirectToAction("ShowInfo", new { HobID = hobID });
+                    }
                 }
             }
-            return View("NewActivity");
-        }
 
-        [HttpGet("editActivity/{actID}")]
-        public IActionResult EditActivity(int actID)
-        {
-            Activity activity = dbContext.Activities.FirstOrDefault(a => a.ActivityId == actID);
-            return View(activity);
-        }
-
-        [HttpPost("updActivity/{actID}")]
-
-        public IActionResult UpdActivity(Activity activity, int actID)
-        {
-
-            Activity u_act = dbContext.Activities.FirstOrDefault(a => a.ActivityId == actID);
-
-            u_act.Title = activity.Title;
-            u_act.Time = activity.Time;
-            u_act.Date = activity.Date;
-            u_act.Duration = activity.Duration;
-            u_act.DurUnit = activity.DurUnit;
-            u_act.Description = activity.Description;
-            u_act.UpdatedAt = DateTime.Now;
-
+            Enthusiast uhob = new Enthusiast();
+            uhob.UserId = (int)HttpContext.Session.GetInt32("UserId");
+            uhob.HobbyId = hobID;
+            dbContext.Enthusiasts.Add(uhob);
             dbContext.SaveChanges();
             return RedirectToAction("Dashboard");
         }
-
-
 
         // [HttpPost("addActivity")]
         // public IActionResult AddActivity(Activity activity)
@@ -250,43 +286,34 @@ namespace BeltExam.Controllers
         //     return View(activity);
         // }
 
-        [HttpGet("join/{actID}")]
-        public IActionResult Join(int actID)
-        {
-            UserActivity uact = new UserActivity();
-            uact.UserId = (int)HttpContext.Session.GetInt32("UserId");
-            uact.ActivityId = actID;
-            dbContext.UserActivities.Add(uact);
-            dbContext.SaveChanges();
-            return RedirectToAction("Dashboard");
-        }
-
-        [HttpGet("leave/{actID}")]
-        public IActionResult Leave(int actID)
-        {
-            UserActivity toDelete = dbContext.UserActivities.FirstOrDefault(u => u.ActivityId == actID);
-            if (toDelete == null)
-                return RedirectToAction("Dashboard");
-
-            dbContext.UserActivities.Remove(toDelete);
-            dbContext.SaveChanges();
-
-            return RedirectToAction("Dashboard");
-        }
 
 
-        [HttpGet("delete/{actID}")]
-        public IActionResult Delete(int actID)
-        {
-            Activity toDelete = dbContext.Activities.FirstOrDefault(u => u.ActivityId == actID);
-            if (toDelete == null)
-                return RedirectToAction("Dashboard");
+        // [HttpGet("leave/{actID}")]
+        // public IActionResult Leave(int actID)
+        // {
+        //     UserActivity toDelete = dbContext.UserActivities.FirstOrDefault(u => u.ActivityId == actID);
+        //     if (toDelete == null)
+        //         return RedirectToAction("Dashboard");
 
-            dbContext.Activities.Remove(toDelete);
-            dbContext.SaveChanges();
+        //     dbContext.UserActivities.Remove(toDelete);
+        //     dbContext.SaveChanges();
 
-            return RedirectToAction("Dashboard");
-        }
+        //     return RedirectToAction("Dashboard");
+        // }
+
+
+        // [HttpGet("delete/{actID}")]
+        // public IActionResult Delete(int actID)
+        // {
+        //     Activity toDelete = dbContext.Activities.FirstOrDefault(u => u.ActivityId == actID);
+        //     if (toDelete == null)
+        //         return RedirectToAction("Dashboard");
+
+        //     dbContext.Activities.Remove(toDelete);
+        //     dbContext.SaveChanges();
+
+        //     return RedirectToAction("Dashboard");
+        // }
 
 
         [HttpGet("logout")]

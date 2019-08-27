@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BeltExam.Migrations
 {
-    public partial class MVCBeltPractice : Migration
+    public partial class MVCBeltExam2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -16,7 +16,7 @@ namespace BeltExam.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     FirstName = table.Column<string>(nullable: false),
                     LastName = table.Column<string>(nullable: false),
-                    Email = table.Column<string>(nullable: false),
+                    Username = table.Column<string>(maxLength: 15, nullable: false),
                     Password = table.Column<string>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: false)
@@ -27,26 +27,22 @@ namespace BeltExam.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Activities",
+                name: "Hobbies",
                 columns: table => new
                 {
-                    ActivityId = table.Column<int>(nullable: false)
+                    HobbyId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(nullable: false),
-                    Title = table.Column<string>(nullable: false),
-                    Time = table.Column<string>(nullable: true),
-                    Date = table.Column<DateTime>(nullable: false),
-                    Duration = table.Column<int>(nullable: false),
-                    DurUnit = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Activities", x => x.ActivityId);
+                    table.PrimaryKey("PK_Hobbies", x => x.HobbyId);
                     table.ForeignKey(
-                        name: "FK_Activities_Users_UserId",
+                        name: "FK_Hobbies_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
@@ -54,27 +50,28 @@ namespace BeltExam.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserActivities",
+                name: "Enthusiasts",
                 columns: table => new
                 {
-                    UserActivityId = table.Column<int>(nullable: false)
+                    EnthusiastId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    ActivityId = table.Column<int>(nullable: false),
+                    HobbyId = table.Column<int>(nullable: false),
                     UserId = table.Column<int>(nullable: false),
+                    Proficiency = table.Column<string>(nullable: true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserActivities", x => x.UserActivityId);
+                    table.PrimaryKey("PK_Enthusiasts", x => x.EnthusiastId);
                     table.ForeignKey(
-                        name: "FK_UserActivities_Activities_ActivityId",
-                        column: x => x.ActivityId,
-                        principalTable: "Activities",
-                        principalColumn: "ActivityId",
+                        name: "FK_Enthusiasts_Hobbies_HobbyId",
+                        column: x => x.HobbyId,
+                        principalTable: "Hobbies",
+                        principalColumn: "HobbyId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserActivities_Users_UserId",
+                        name: "FK_Enthusiasts_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
@@ -82,28 +79,28 @@ namespace BeltExam.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Activities_UserId",
-                table: "Activities",
+                name: "IX_Enthusiasts_HobbyId",
+                table: "Enthusiasts",
+                column: "HobbyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Enthusiasts_UserId",
+                table: "Enthusiasts",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserActivities_ActivityId",
-                table: "UserActivities",
-                column: "ActivityId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserActivities_UserId",
-                table: "UserActivities",
+                name: "IX_Hobbies_UserId",
+                table: "Hobbies",
                 column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "UserActivities");
+                name: "Enthusiasts");
 
             migrationBuilder.DropTable(
-                name: "Activities");
+                name: "Hobbies");
 
             migrationBuilder.DropTable(
                 name: "Users");

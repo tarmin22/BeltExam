@@ -7,12 +7,15 @@ namespace BeltExam.Models
     public class Login
     {
 
-        [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Invalid email address.")]
-        public string LEmail { get; set; }
+        [Required(ErrorMessage = "Username is required.")]
+        [MinLength(3)]
+        [MaxLength(15)]
+        [Display(Name = "Username")]
+        public string LUsername { get; set; }
         [Required(ErrorMessage = "Password is required.")]
         [MinLength(8)]
         [DataType(DataType.Password)]
+        [Display(Name = "Password")]
         public string LPassword { get; set; }
 
     }
